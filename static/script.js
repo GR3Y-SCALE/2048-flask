@@ -1,12 +1,16 @@
-var board;
-var score = 0;
-var rows = 4;
-var columns = 4;
-var looseGame = false;
-var debugging = true;
+let board;
+let score = 0;
+const rows = 4;
+const columns = 4;
+let looseGame = false;
+let debugging = true;
+
+let highScore;
 
 window.onload = function() {
     setGame();
+    highScore = getHighScore();
+
 }
 
 function setGame() {
@@ -79,10 +83,11 @@ document.addEventListener('keyup', (e) => {
             slideDown();
             setTwo();
         }
-        document.getElementById("score").innerText = score;
+        document.getElementById("score").innerText = getScore();
         checkLooseGame();
+
     } else {
-      document.getElementById("notification").innerText = "Loose";
+      updateScores();
     }
 })
 
@@ -97,7 +102,7 @@ function slide(row) {
         if (row[i] == row[i+1]) {
             row[i] *= 2;
             row[i+1] = 0;
-            score += row[i];
+
         }
     } //[4, 0, 2]
     row = filterZero(row); //[4, 2]
@@ -204,14 +209,82 @@ function hasEmptyTile() {
 }
 
 
+/*function sendScore(highScore) {
+  //let stringedScore = String(highScore);
+  let dict_values = {"highScore" : highScore}; //Passes js var to dictionary
+  if (debugging) {console.log(dict_values)} //Will output if debugging enabled
+  $.ajax({
+    url:"/score",
+    type:"POST",
+    dataType : "json",
+    contentType: "application/json; charset=utf-8",
+    data: JSON.stringify(dict_values)
+  });
+}
+*/
 function sendScore(highScore) {
   var dict_values = {highScore}; //Passes js var to dictionary
   var stringed = JSON.stringify(dict_values); //stringify converts js val to JSON
   if (debugging) {console.log(stringed)} //Will output if debugging enabled
-  $.ajax({
-    url:"/score",
-    type:"POST",
-    contentType: "application/JSON",
-    data: JSON.stringify(stringed)
+  fetch("/score", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: stringed
   });
+}
+
+function getHighScore() {
+  let highScore = document.getElementById("high-score").innerText;
+  return highScore;
+}
+
+function setHighScore(value) {
+  document.getElementById("highScore").innerText = value;
+}
+
+function checkHighestScore(highScore,score) {
+  if (score > highScore) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+function getScore() {
+  let currentTile = 0;
+  for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < columns; c++) {
+        currentTile += board[r][c]
+      }
+    }
+    return currentTile;
+}
+
+function databaseError(message) {
+  const error = new Error(message);
+  return error;
+}
+databaseError.prototype = Object.create(Error.prototype);
+
+
+function confirmScoreUpdate() {
+  let currentBoardScore = getScore();
+  let dbScore = getHighScore();
+  if (!dbScore == currentBoardScore) {
+    throw new databaseError('Database Connectivity Error')
+  }
+}
+
+function updateScores() {
+  let currentScore = getScore();
+  if (checkHighestScore(highScore, currentScore)) {
+    highScore = currentScore;
+    try {
+      sendScore(currentScore);
+      confirmScoreUpdate(currentScore, dbScore = getHighScore());
+    } catch (error) {
+      alert("Error: " + error)
+    }
+  }
 }

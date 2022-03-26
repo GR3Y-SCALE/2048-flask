@@ -2,16 +2,32 @@
 <html>
   <head>
     <title>2048</title>
-    <link href="{{url_for('static',filename='css/style.css')}}" rel="stylesheet">
-    <script src="{{url_for('static',filename='js/script.js')}}"></script>
-    <script src="{{url_for('static',filename='js/p5.js')}}"></script>
+    <link href="{{url_for('static',filename='style.css')}}" rel="stylesheet">
+    <script src="{{url_for('static',filename='script.js')}}"></script>
+    <script src="{{ url_for('static', filename='jquery.js') }}"></script>
+
+
   </head>
   <body>
     <h1>2048</h1>
     <h2>By Maurice</h2>
     <hr>
-    <h2>Highest Score: <span id="high-score">0</span></h2>
+    <h2>Highest Score: <span id="high-score">{{highScore}}</span></h2>
     <h2>Your Score: <span id="score">0</span></h2>
-    <div id="board">
+    <div class="grid-container">
+      <div class="grid-item item1">
+        <table>
+          <thead><tr><th>Name</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>Name1</td><td>Description1</td></tr>
+            <tr><td>Name2</td><td>Description2</td></tr>
+            <tr><td>Name3</td><td>Description3</td></tr>
+          </tbody>
+        </table>
+        </div>
+      <div class="grid-item item2">
+        <div id="board">
+        </div>
+    </div>
   </body>
 </html>
