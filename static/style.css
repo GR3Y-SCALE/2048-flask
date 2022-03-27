@@ -1,6 +1,7 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
     text-align: center;
+
 }
 
 hr {
@@ -10,7 +11,7 @@ hr {
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
-  width: 25%;
+  width: 15%;
 }
 
 td, th {
@@ -19,27 +20,32 @@ td, th {
   padding: 8px;
 }
 
-tr:nth-child(even) {
+tr:nth-child(1) {
   background-color: #dddddd;
 }
-
-
-.grid-container {
-  display: grid;
+tr:nth-child(2) {
+  background-color: #72d084;
+}
+.input {
+  text-align: left;
 }
 
-.grid-item {
+#button {
+  background-color: #4CAF50; /* Green */
+  border-radius: 8px;
+  color: white;
   text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }
 
-.item1 {
-  grid-column: 1;
-  grid-row: 1;
+input[type=text] {
+  padding: 5px 5px;
 }
 
-.item2 {
-  grid-column: 1;
-  grid-row: 1;
+input[type=text]:focus {
+  border: 3px solid #555;
 }
 
 #board {
@@ -50,6 +56,7 @@ tr:nth-child(even) {
     border: 6px solid #bbada0;
 
     margin: 0 auto;
+    margin-top: -200px;
     display: flex;
     flex-wrap: wrap;
     align-self: center;
