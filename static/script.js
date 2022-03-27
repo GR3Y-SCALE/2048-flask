@@ -4,13 +4,25 @@ const rows = 4;
 const columns = 4;
 let looseGame = false;
 let debugging = true;
-
+let winner = false;
 let highScore;
+
+function btnState(condition) {
+  button = document.getElementById("button");
+  if (condition) {
+    button.style.opacity = "1"
+    button.style.cursor = "allowed"
+  } else {
+    button.style.opacity = "0.2"
+    button.style.cursor = "not-allowed"
+  }
+}
+
 
 window.onload = function() {
     setGame();
     highScore = getHighScore();
-
+    btnState(false);
 }
 
 function setGame() {
@@ -38,8 +50,9 @@ function setGame() {
         }
     }
     //create 2 to begin the game
-    setTwo();
-    setTwo();
+    ranTileVal();
+    ranTileVal();
+
 
 }
 
@@ -83,11 +96,11 @@ document.addEventListener('keyup', (e) => {
             slideDown();
             setTwo();
         }
-        document.getElementById("score").innerText = getScore();
+        document.getElementById("score").innerText = score;
         checkLooseGame();
 
     } else {
-      updateScores();
+      endGame()
     }
 })
 
@@ -100,6 +113,7 @@ function slide(row) {
     row = filterZero(row); //[2, 2, 2]
     for (let i = 0; i < row.length-1; i++){
         if (row[i] == row[i+1]) {
+          getScore(row[i],row[i+1]);
             row[i] *= 2;
             row[i+1] = 0;
 
@@ -196,6 +210,35 @@ function setTwo() {
     }
 }
 
+function setFour() {
+    if (!hasEmptyTile()) {
+        return;
+    }
+    let found = false;
+    while (!found) {
+        //find random row and column to place a 2 in
+        let r = Math.floor(Math.random() * rows);
+        let c = Math.floor(Math.random() * columns);
+        if (board[r][c] == 0) {
+            board[r][c] = 2;
+            let tile = document.getElementById(r.toString() + "-" + c.toString());
+            tile.innerText = "4";
+            tile.classList.add("x4");
+            found = true;
+        }
+    }
+}
+
+function ranTileVal() {
+  let max = 4;
+  let min = 1;
+  if (Math.floor(Math.random() * (max - min + 1) + min) <= 2) {
+    setTwo();
+  }else {
+    setFour();
+  }
+}
+
 function hasEmptyTile() {
     let count = 0;
     for (let r = 0; r < rows; r++) {
@@ -251,16 +294,6 @@ function checkHighestScore(highScore,score) {
 }
 
 
-function getScore() {
-  let currentTile = 0;
-  for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < columns; c++) {
-        currentTile += board[r][c]
-      }
-    }
-    return currentTile;
-}
-
 function databaseError(message) {
   const error = new Error(message);
   return error;
@@ -269,22 +302,25 @@ databaseError.prototype = Object.create(Error.prototype);
 
 
 function confirmScoreUpdate() {
-  let currentBoardScore = getScore();
   let dbScore = getHighScore();
-  if (!dbScore == currentBoardScore) {
+  if (!dbScore == score) {
     throw new databaseError('Database Connectivity Error')
   }
 }
 
-function updateScores() {
-  let currentScore = getScore();
-  if (checkHighestScore(highScore, currentScore)) {
-    highScore = currentScore;
-    try {
-      sendScore(currentScore);
-      confirmScoreUpdate(currentScore, dbScore = getHighScore());
-    } catch (error) {
-      alert("Error: " + error)
-    }
+function getScore(firstTile, secondTile) {
+  if (firstTile > 0 && secondTile > 0) {
+    score = score + firstTile + secondTile;
+  }
+}
+
+function syncScoreDB() {
+
+}
+
+function endGame(){
+  if (checkHighestScore()) {
+    winner = true
+
   }
 }

@@ -9,25 +9,28 @@
 
   </head>
   <body>
+    <div class="box">
     <h1>2048</h1>
-    <h2>By Maurice</h2>
+    <h2>By Grey</h2>
     <hr>
     <h2>Highest Score: <span id="high-score">{{highScore}}</span></h2>
     <h2>Your Score: <span id="score">0</span></h2>
-    <div class="grid-container">
-      <div class="grid-item item1">
+    <div class="input">
+        <form action='/' method = "POST">
+          <input type="text" name="text" value = ""placeholder="4-letter name">
+          <input id="button" class="button" type="submit" name="btn" value="Submit">
+        </form>
+      </div>
         <table>
-          <thead><tr><th>Name</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td>Name1</td><td>Description1</td></tr>
-            <tr><td>Name2</td><td>Description2</td></tr>
-            <tr><td>Name3</td><td>Description3</td></tr>
-          </tbody>
+              <th>Name</th><th>Score</th>
+            </tr>
+          </th>
+          {% for item in items %}
+            <tr><td>{{item[0]}}</td><td>{{item[1]}}</td></tr>
+          {% endfor %}
         </table>
-        </div>
-      <div class="grid-item item2">
         <div id="board">
         </div>
-    </div>
+      </div>
   </body>
 </html>
